@@ -1,28 +1,27 @@
 {
-  "name": "instagram-clone",
+  "name": "mern_app_boilerplate",
   "version": "1.0.0",
-  "description": "",
+  "description": "instagram-clone",
   "main": "index.js",
+  "scripts": {
+    "start:dev-full": "concurrently \"nodemon server.js\" \"npm run start:dev --prefix client\"",
+    "start": "node server.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+  },
   "author": "",
   "license": "ISC",
-  "scripts": {
-    "start:dev": "webpack-dev-server"
-  },
   "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
     "body-parser": "^1.18.2",
-    "cookie-session": "^2.0.0-beta.3",
-    "express": "^4.16.2",
-    "mongoose": "^5.0.0",
-    "morgan": "^1.9.0",
-    "passport": "^0.4.0",
-    "passport-facebook": "^2.1.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7"
+    "concurrently": "^3.5.1",
+    "express": "^4.16.3",
+    "mongoose": "^5.0.15"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.8.2",
+    "nodemon": "^1.17.3"
   }
 }
