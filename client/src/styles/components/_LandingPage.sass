@@ -1,0 +1,117 @@
+.landing-page
+  min-height: 100vh
+  background: #fafafa
+  border: 1px solid #fafafa
+  font: normal 14px Arial
+
+  .container
+    display: flex
+    width: 100%
+    max-width: 735px
+    margin: 30px auto
+
+    .left, .right
+      width: 75%
+
+    .left
+      img
+        max-width: 350px
+        margin: 80px auto
+
+    .right
+      .form-div
+        padding: 30px 50px
+        text-align: center
+        color: #999
+        background: #fff
+        border: 1px solid #e6e6e6
+
+        img
+          width: 75%
+
+        p:nth-of-type(1)
+          margin: 0
+          font: bold 16px Arial
+
+        .or
+          display: flex
+          justify-content: space-between
+          margin: 10px auto
+
+          .line
+            width: 40%
+            height: 6px
+            border-bottom: 1px solid #999
+
+        .btn-big-blue
+          width: 100%
+          margin: 15px auto
+          padding: 6px
+          color: #fff
+          background: $blue
+          border-radius: 3px
+          font: bold 14px Arial, sans-serif
+
+          .icon
+            margin: auto 7px
+
+        form
+          input
+            width: calc(100% - 22px)
+            margin: 3px auto
+            padding: 10px
+            background: #fafafa
+            border: 1px solid #e6e6e6
+            border-radius: 3px
+
+    .action-login
+      margin-top: 10px
+      padding: 10px 50px
+      text-align: center
+      background: #fff
+      border: 1px solid #e6e6e6
+
+      a
+        color: $blue
+
+    .get-app
+      margin: 20px auto
+      text-align: center
+
+      p
+        margin: 20px auto
+
+      div
+        a
+          img
+            max-width: 130px
+            margin: 0 5px
+
+  footer
+    max-width: 950px
+    margin: 50px auto
+    font: bold 12px Arial
+
+    div
+      display: flex
+
+      nav
+        width: 80%
+
+        ul
+          display: flex
+          width: 100%
+          margin: 0
+          padding: 0
+          list-style: none
+
+          li
+            padding: 0 6px
+
+            a
+              color: $blue-dark
+
+      span
+        width: 200px
+        color: #999
+        text-align: right

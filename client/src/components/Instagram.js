@@ -1,8 +1,9 @@
 import React from 'react';
+import LandingPage from './LandingPage';
 
 const Instagram = () => (
-  <div>
-    <h1>HOME PAGE</h1>
+  <div className="instagram">
+    <LandingPage />
   </div>
 );
 
