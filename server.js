@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const { MongoClient, ObjectID } = require('mongodb');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const bcrypt = require('bcryptjs');
 const privates = require('./config/privates');
 const authenticate = require('./middleware/authenticate');
 
@@ -42,7 +43,7 @@ MongoClient.connect(privates.MONGODB_URI, (err, client) => {
   passport.use(new LocalStrategy((username, password, done) => {
     db.collection('users').findOne({ username }, (err, user) => {
       if (err) return done(err);
-      if (!user || password !== user.password) return done(null, false);
+      if (!user || !bcrypt.compareSync(password, user.password)) return done(null, false);
 
       return done(null, user);
     });
@@ -53,9 +54,12 @@ MongoClient.connect(privates.MONGODB_URI, (err, client) => {
   });
 
   app.post('/auth/register', (req, res, next) => {
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(req.body.password, salt);
+
     const newUser = {
       username: req.body.username,
-      password: req.body.password,
+      password: hash,
       fullname: req.body.fullname,
       phone: req.body.phone,
     };
