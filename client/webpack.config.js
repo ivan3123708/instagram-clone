@@ -40,7 +40,7 @@ module.exports = {
     publicPath: '/dist',
     historyApiFallback: true,
     proxy: [{
-      context: [/* define routes to redirect here. ex: /api/* */],
+      context: ['/auth/*', '/api/*'],
       target: 'http://localhost:5000',
     }],
   },
