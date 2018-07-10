@@ -1,7 +1,8 @@
 const path = require('path');
 const express = require('express');
-const session = require('express-session');
 const bodyParser = require('body-parser');
+const validator = require('express-validator');
+const session = require('express-session');
 const { MongoClient, ObjectID } = require('mongodb');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -17,6 +18,7 @@ const app = express();
 app.use(express.static(publicPath));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(validator());
 app.use(session({
   secret: privates.SESSION_SECRET,
   resave: true,
@@ -54,29 +56,53 @@ MongoClient.connect(privates.MONGODB_URI, (err, client) => {
   });
 
   app.post('/auth/register', (req, res, next) => {
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(req.body.password, salt);
+    req.check('emailOrPhone', 'Email or phone number is required').notEmpty();
+    req.check('emailOrPhone', 'Enter a valid email address.').isEmail();
+    req.check('username', 'Username is required.').notEmpty();
+    req.check('password', 'Password is required').notEmpty();
+    req.check('password', 'Create a password at least 6 characters long.').isLength({ min: 6 });
 
-    const newUser = {
-      username: req.body.username,
-      password: hash,
-      fullname: req.body.fullname,
-      phone: req.body.phone,
-    };
+    const errors = req.validationErrors();
 
-    db.collection('users').findOne({ username: newUser.username }, (err, user) => {
-      if (err) next(err);
-      else if (user) res.redirect('/');
-      else {
-        db.collection('users').insertOne(newUser, (err, user) => {
-          if (err) console.log(err);
-          console.log('New user registered.');
+    if (errors) {
+      res.send(errors[0].msg);
+    } else {
+      db.collection('users').findOne({ username: req.body.username }, (err, user) => {
+        if (err) {
+          console.log(err);
+        } else if (user) {
+          res.send('This username isn\'t available. Please try another.');
+        }
+      });
+
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(req.body.password, salt);
+
+      const newUser = {
+        fullname: req.body.fullname,
+        username: req.body.username,
+        password: hash,
+        emailOrPhone: req.body.emailOrPhone,
+      };
+
+      db.collection('users').findOne({ username: newUser.username }, (err, user) => {
+        if (err) {
+          console.log(err);
+        } else if (user) {
           next(null, user);
-        });
-      }
-    });
+        } else {
+          db.collection('users').insertOne(newUser, (err, user) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log('New user registered.');
+            next(null, user);
+          });
+        }
+      });
+    }
   }, authenticate, (req, res) => {
-    res.redirect('/profile');
+    res.status(200).send('OK');
   });
 
   app.post('/auth/login', authenticate, (req, res) => {

@@ -21,20 +21,22 @@ class LandingPage extends React.Component {
     this.submitRegister = (e) => {
       e.preventDefault();
 
-      const phone = e.target.phone.value;
+      const emailOrPhone = e.target.emailOrPhone.value;
       const fullname = e.target.fullname.value;
       const username = e.target.username.value;
       const password = e.target.password.value;
 
       axios.post('/auth/register', {
-        phone,
+        emailOrPhone,
         fullname,
         username,
         password,
       })
         .then((res) => {
-          if (res.data !== 'OK') {
-            this.setState({ error: res.data[0].msg });
+          if (res.data === 'OK') {
+            this.props.getUser();
+          } else {
+            this.setState({ error: res.data });
           }
         })
         .catch((err) => {
@@ -81,10 +83,10 @@ class LandingPage extends React.Component {
                   <div className="line" /><b>OR</b><div className="line" />
                 </div>
                 <form onSubmit={this.submitRegister}>
-                  <input name="phone" placeholder="Mobile Number or Email" />
-                  <input name="fullname" placeholder="Full Name" />
-                  <input name="username" placeholder="Username" />
-                  <input name="password" placeholder="Password" />
+                  <input type="text" name="emailOrPhone" placeholder="Mobile Number or Email" />
+                  <input type="text" name="fullname" placeholder="Full Name" />
+                  <input type="text" name="username" placeholder="Username" />
+                  <input type="password" name="password" placeholder="Password" />
                   <button className="btn-big-blue">Sign up</button>
                   <p className="error">{this.state.error}</p>
                 </form>
