@@ -14,60 +14,64 @@ class LandingPage extends React.Component {
       form: 'register',
     };
 
-    this.toggleForm = () => {
-      this.setState((prevState) => ({
-        form: prevState.form === 'register' ? 'login' : 'register',
-        error: null,
-      }));
-    };
+    this.toggleForm = this.toggleForm.bind(this);
+    this.submitRegister = this.submitRegister.bind(this);
+    this.submitLogin = this.submitLogin.bind(this);
+  }
 
-    this.submitRegister = (e) => {
-      e.preventDefault();
+  toggleForm() {
+    this.setState((prevState) => ({
+      form: prevState.form === 'register' ? 'login' : 'register',
+      error: null,
+    }));
+  }
 
-      const emailOrPhone = e.target.emailOrPhone.value;
-      const fullname = e.target.fullname.value;
-      const username = e.target.username.value;
-      const password = e.target.password.value;
+  submitRegister(e) {
+    e.preventDefault();
 
-      axios.post('/auth/register', {
-        emailOrPhone,
-        fullname,
-        username,
-        password,
+    const emailOrPhone = e.target.emailOrPhone.value;
+    const fullname = e.target.fullname.value;
+    const username = e.target.username.value;
+    const password = e.target.password.value;
+
+    axios.post('/auth/register', {
+      emailOrPhone,
+      fullname,
+      username,
+      password,
+    })
+      .then((res) => {
+        if (res.data === 'OK') {
+          this.props.getUser();
+        } else {
+          this.setState({ error: res.data });
+        }
       })
-        .then((res) => {
-          if (res.data === 'OK') {
-            this.props.getUser();
-          } else {
-            this.setState({ error: res.data });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
-    this.submitLogin = (e) => {
-      e.preventDefault();
+  submitLogin(e) {
+    e.preventDefault();
 
-      const username = e.target.username.value;
-      const password = e.target.password.value;
+    const username = e.target.username.value;
+    const password = e.target.password.value;
 
-      axios.post('/auth/login', {
-        username,
-        password,
+    axios.post('/auth/login', {
+      username,
+      password,
+    })
+      .then((res) => {
+        if (res.data === 'OK') {
+          this.props.getUser();
+        } else {
+          this.setState({ error: res.data });
+        }
       })
-        .then((res) => {
-          if (res.data === 'OK') {
-            this.props.getUser();
-          } else {
-            this.setState({ error: res.data });
-          }
-        })
-        .catch(() => {
-          this.setState({ error: 'Sorry, your username or password was incorrect. Please double-check your username and password.' });
-        });
-    };
+      .catch(() => {
+        this.setState({ error: 'Sorry, your username or password was incorrect. Please double-check your username and password.' });
+      });
   }
 
   render() {
