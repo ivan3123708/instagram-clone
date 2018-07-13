@@ -45,7 +45,7 @@ MongoClient.connect(privates.MONGODB_URI, (err, client) => {
   passport.use(new LocalStrategy((username, password, done) => {
     db.collection('users').findOne({ username }, (err, user) => {
       if (err) return done(err);
-      if (!user || !bcrypt.compareSync(password, user.password)) return done(null, false);
+      if (!user || !bcrypt.compareSync(password, user.password)) return done('Invalid login', false);
 
       return done(null, user);
     });
@@ -105,7 +105,18 @@ MongoClient.connect(privates.MONGODB_URI, (err, client) => {
     res.status(200).send('OK');
   });
 
-  app.post('/auth/login', authenticate, (req, res) => {
+  app.post('/auth/login', (req, res, next) => {
+    req.check('username', 'Username is required.').notEmpty();
+    req.check('password', 'Password is required').notEmpty();
+
+    const errors = req.validationErrors();
+
+    if (errors) {
+      res.send(errors[0].msg);
+    } else {
+      next();
+    }
+  }, authenticate, (req, res) => {
     console.log('User logged in.');
     res.status(200).send('OK');
   });

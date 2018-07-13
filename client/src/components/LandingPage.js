@@ -15,7 +15,10 @@ class LandingPage extends React.Component {
     };
 
     this.toggleForm = () => {
-      this.setState((prevState) => ({ form: prevState.form === 'register' ? 'login' : 'register' }));
+      this.setState((prevState) => ({
+        form: prevState.form === 'register' ? 'login' : 'register',
+        error: null,
+      }));
     };
 
     this.submitRegister = (e) => {
@@ -54,11 +57,15 @@ class LandingPage extends React.Component {
         username,
         password,
       })
-        .then(() => {
-          this.props.getUser();
+        .then((res) => {
+          if (res.data === 'OK') {
+            this.props.getUser();
+          } else {
+            this.setState({ error: res.data });
+          }
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          this.setState({ error: 'Sorry, your username or password was incorrect. Please double-check your username and password.' });
         });
     };
   }
@@ -98,8 +105,8 @@ class LandingPage extends React.Component {
               <div className="form-div">
                 <img src="img/instagram_logo.png" alt="instagram logo" />
                 <form onSubmit={this.submitLogin}>
-                  <input name="username" placeholder="Phone Number, Username or Email" />
-                  <input name="password" placeholder="Password" />
+                  <input type="text" name="username" placeholder="Phone Number, Username or Email" />
+                  <input type="password" name="password" placeholder="Password" />
                   <button className="btn-big-blue">Log in</button>
                   <p className="error">{this.state.error}</p>
                   <a href="#">Forgot password?</a>
