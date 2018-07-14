@@ -43,7 +43,7 @@ MongoClient.connect(privates.MONGODB_URI, (err, client) => {
     });
   });
   passport.use(new LocalStrategy((username, password, done) => {
-    db.collection('users').findOne({ username }, (err, user) => {
+    db.collection('users').findOne({ $or: [{ username }, { emailOrPhone: username }] }, (err, user) => {
       if (err) return done(err);
       if (!user || !bcrypt.compareSync(password, user.password)) return done('Invalid login', false);
 
@@ -72,6 +72,14 @@ MongoClient.connect(privates.MONGODB_URI, (err, client) => {
           console.log(err);
         } else if (user) {
           res.send('This username isn\'t available. Please try another.');
+        }
+      });
+
+      db.collection('users').findOne({ emailOrPhone: req.body.emailOrPhone }, (err, user) => {
+        if (err) {
+          console.log(err);
+        } else if (user) {
+          res.send('This email is already associated with an account');
         }
       });
 
